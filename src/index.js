@@ -88,8 +88,7 @@ const main = async () => {
     }
   })
 
-  console.log("wow oh boy oh boy", cleaned)
-
+  console.log("all reviews currently on OutbreakSciencePREReview: ", '\n', '\n', '\n', cleaned)
 }
 
 main()

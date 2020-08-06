@@ -11,14 +11,15 @@
     "doc": "docs"
   },
   "homepage": "",
-  "main": "./dist/backend/index.js",
+  "main": "./dist/index.js",
   "bin": {
-    "prereview-feed": "./dist/backend/index.js"
+    "prereview-feed": "./dist/index.js"
   },
   "files": [
     "/dist"
   ],
   "scripts": {
+    "build": "parcel build src/index.js -d dist"
   },
   "engines": {
     "node": ">=12.0"
@@ -37,51 +38,8 @@
   },
   "babel": {
     "plugins": [
-      "react-imported-component/babel"
-    ],
-    "presets": [
-      "@babel/preset-react",
-      [
-        "@babel/preset-env",
-        {
-          "targets": {
-            "browsers": [
-              ">2%",
-              "last 1 Edge version",
-              "last 2 Safari version",
-              "last 1 Firefox version"
-            ]
-          },
-          "loose": true
-        }
-      ]
-    ],
-    "env": {
-      "server": {
-        "plugins": [
-          "react-imported-component/babel",
-          "@babel/plugin-syntax-dynamic-import",
-          [
-            "transform-inline-environment-variables",
-            {
-              "include": [
-                "NODE_ENV",
-                "npm_package_name",
-                "npm_package_version",
-                "npm_package_description"
-              ]
-            }
-          ]
-        ]
-      },
-      "client": {
-        "plugins": [
-          [
-            "react-imported-component/babel"
-          ]
-        ]
-      }
-    }
+      "@babel/plugin-syntax-dynamic-import"
+    ]
   },
   "husky": {
     "hooks": {
@@ -156,5 +114,26 @@
         }
       ]
     }
+  },
+  "devDependencies": {
+    "@babel/core": "^7.11.0",
+    "@babel/plugin-syntax-dynamic-import": "^7.8.3",
+    "babel-jest": "^26.2.2",
+    "eslint": "^7.6.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-jest": "^23.20.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-promise": "^4.2.1",
+    "husky": "^4.2.5",
+    "jest": "^26.2.2",
+    "jest-each": "^26.2.0",
+    "parcel": "^1.12.4",
+    "parcel-bundler": "^1.12.4",
+    "prettier": "^2.0.5"
+  },
+  "dependencies": {
+    "node-fetch": "^2.6.0"
   }
 }

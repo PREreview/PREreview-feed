@@ -1,6 +1,6 @@
 const fetch = require('node-fetch')
 const fs = require('fs')
-// const jsonXML = require('jsontoxml')
+const builder = require('xmlbuilder')
 
 const REVIEWS_API_URL =
   'https://outbreaksci.prereview.org/api/action?q=@type:RapidPREreviewAction&include_docs=true';
@@ -82,19 +82,20 @@ const main = async () => {
 
   const cleaned = allReviews.map(review => {
     return {
-      id: review.doc.object.doi ? review.doc.object.doi : review.doc.object.arXivId,
+      preprintId: review.doc.object.doi ? review.doc.object.doi : review.doc.object.arXivId,
       idType: review.doc.object.doi ? 'DOI' : 'arXivId',
       reviewer: rolesMap.get(review.doc.agent), 
-      date: review.doc.startTime,
-      link: `https://outbreaksci.prereview.org/${review.doc.object.doi ? review.doc.object.doi : review.doc.object.arXivId}?role=${review.doc.agent.split(':')[1]}`
+      dateReviewed: review.doc.startTime,
+      reviewLink: `https://outbreaksci.prereview.org/${review.doc.object.doi ? review.doc.object.doi : review.doc.object.arXivId}?role=${review.doc.agent.split(':')[1]}`
     }
   })
 
   let reviews = JSON.stringify(cleaned)
-  fs.writeFile('reviews', reviews, (error) => {
+  fs.writeFile('reviews.txt', reviews, (error) => {
     if (error) throw error;
-    console.log('The reviews has been saved to a file!');
+    console.log('The reviews has been saved to a file called reviews.txt');
   })
+  
 }
 
 main()

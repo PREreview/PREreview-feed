@@ -1,6 +1,6 @@
 const fetch = require('node-fetch')
 const fs = require('fs')
-const builder = require('xmlbuilder')
+const { create } = require('xmlbuilder2')
 
 const REVIEWS_API_URL =
   'https://outbreaksci.prereview.org/api/action?q=@type:RapidPREreviewAction&include_docs=true';
@@ -83,7 +83,9 @@ const main = async () => {
   const cleaned = allReviews.map(review => {
     return {
       preprintId: review.doc.object.doi ? review.doc.object.doi : review.doc.object.arXivId,
+      preprintTitle: review.doc.object.name,
       idType: review.doc.object.doi ? 'DOI' : 'arXivId',
+      server: review.doc.object.preprintServer ? review.doc.object.preprintServer.name : 'Unable to parse preprint server',
       reviewer: rolesMap.get(review.doc.agent), 
       dateReviewed: review.doc.startTime,
       reviewLink: `https://outbreaksci.prereview.org/${review.doc.object.doi ? review.doc.object.doi : review.doc.object.arXivId}?role=${review.doc.agent.split(':')[1]}`
@@ -91,11 +93,38 @@ const main = async () => {
   })
 
   let reviews = JSON.stringify(cleaned)
+  
   fs.writeFile('reviews.txt', reviews, (error) => {
     if (error) throw error;
-    console.log('The reviews has been saved to a file called reviews.txt');
+    console.log('Reviews have been saved to a file called reviews.txt');
   })
-  
+
+  return cleaned
 }
 
-main()
+const buildXML = async () => {
+  let data = await main();
+
+  const xml = create({ version: '1.0' })
+    .ele('links')
+
+   for (let i = 0; i < data.length; i++) {
+     xml.ele('link', { providerId: 'PREReview'})
+      .ele('resource')
+        .ele('url').txt(data[i].reviewLink).up()
+      .up()
+      .ele('record')
+        .ele('source').txt(data[i].server).up()
+        .ele('id').txt(data[i].preprintId).up()
+      .up()
+    .up()
+   }
+  
+  xml.end({ prettyPrint: true});
+  fs.writeFile('feed.xml', xml, (error) => {
+    if (error) throw error;
+    console.log('Reviews have been saved to a file called feed.xml'); 
+  })
+}
+
+buildXML()

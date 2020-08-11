@@ -124,6 +124,6 @@
   },
   "dependencies": {
     "node-fetch": "^2.6.0",
-    "xmlbuilder": "^15.1.1"
+    "xmlbuilder2": "^2.3.1"
   }
 }

@@ -1,4 +1,6 @@
 const fetch = require('node-fetch')
+const fs = require('fs')
+// const jsonXML = require('jsontoxml')
 
 const REVIEWS_API_URL =
   'https://outbreaksci.prereview.org/api/action?q=@type:RapidPREreviewAction&include_docs=true';
@@ -88,7 +90,11 @@ const main = async () => {
     }
   })
 
-  console.log("all reviews currently on OutbreakSciencePREReview: ", '\n', '\n', '\n', cleaned)
+  let reviews = JSON.stringify(cleaned)
+  fs.writeFile('reviews', reviews, (error) => {
+    if (error) throw error;
+    console.log('The reviews has been saved to a file!');
+  })
 }
 
 main()

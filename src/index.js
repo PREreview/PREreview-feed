@@ -1,6 +1,7 @@
 const fetch = require('node-fetch')
 const fs = require('fs')
 const { create } = require('xmlbuilder2')
+const Feed = require('feed').Feed;
 
 const REVIEWS_API_URL =
   'https://outbreaksci.prereview.org/api/action?q=@type:RapidPREreviewAction&include_docs=true';
@@ -122,24 +123,61 @@ const main = async () => {
       preprintTitle: review.doc.object.name,
       idType: review.doc.object.doi ? 'DOI' : 'arXivId',
       reviewer: rolesMap.get(review.doc.agent), 
-      dateReviewed: review.doc.startTime,
+      dateReviewed: new Date(review.doc.startTime),
       reviewLink: `https://outbreaksci.prereview.org/${review.doc.object.doi ? review.doc.object.doi : review.doc.object.arXivId}?role=${review.doc.agent.split(':')[1]}`
     }
   })
 
+  const sorted = cleaned.sort((a, b) => b.dateReviewed - a.dateReviewed)
 
-
-  let reviews = JSON.stringify(cleaned)
+  const reviews = JSON.stringify(sorted)
   
   fs.writeFile('reviews.txt', reviews, (error) => {
     if (error) throw error;
     console.log('All reviews have been saved to a file called reviews.txt');
   })
 
-  return cleaned
+  return sorted
 }
 
-main()
+const buildFeed = async () => {
+  const reviews = await main()
+
+  const withDOI = reviews.filter(review => review.idType === 'DOI')
+
+  const feed = new Feed({
+    title: "OutbreakScience Rapid PREreview",
+    description: "Rapid reviews of preprints posted on OutbreakScience Rapid PREreview",
+    id: "https://outbreaksci.prereview.org/",
+    link: "https://outbreaksci.prereview.org/",
+    image: "http://example.com/image.png",
+    favicon: "http://example.com/favicon.ico",
+    copyright: "OutbreakScience Rapid PREreview",
+    author: {
+      name: "Outbreak Science Rapid PREreview",
+      email: "outbreaksci@prereview.org",
+      link: "https://outbreaksci.prereview.org/"
+    }
+  })
+
+  withDOI.forEach(review => {
+    feed.addItem({
+      title: 'A rapid review of ' + `${review.preprintTitle}`,
+      preprintDOI: review.preprintId,
+      id: review.reviewLink,
+      link: review.reviewLink,
+      reviewer: review.reviewer,
+      date: review.dateReviewed,
+    })
+  })
+  
+  fs.writeFile('reviews.rss', feed.rss2(), (error) => {
+    if (error) throw error;
+    (console.log("Thanks for generating an RSS feed of all reviews of preprints with DOI on OutbreakScience Rapid PREreview!"));
+  })
+}
+
+buildFeed()
 
 const processPreprints = async () => {
   const hasReviews = await getAllPreprints()
@@ -164,9 +202,9 @@ const buildXML = async () => {
     .ele('links')
 
    for (let i = 0; i < preprints.length; i++) {
-     xml.ele('link', { providerId: 'PREReview'})
+     xml.ele('link', { providerId: 'PREReview' })
       .ele('resource')
-        .ele('title').txt(`PREreview(s) for '${preprints[i].title}'`).up()
+        .ele('title').txt(`PREreview(s) of '${preprints[i].title}'`).up()
         .ele('url').txt(preprints[i].link).up()
       .up()
       .ele('record')
@@ -176,7 +214,7 @@ const buildXML = async () => {
     .up()
    }
   
-  xml.end({ prettyPrint: true});
+  xml.end({ prettyPrint: true });
 
   fs.writeFile('feed.xml', xml, (error) => {
     if (error) throw error;
@@ -184,4 +222,4 @@ const buildXML = async () => {
   })
 }
 
-buildXML()
+// buildXML()

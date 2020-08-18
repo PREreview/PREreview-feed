@@ -222,4 +222,4 @@ const buildXML = async () => {
   })
 }
 
-// buildXML()
+buildXML()

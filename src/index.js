@@ -162,10 +162,7 @@ const buildFeed = async () => {
     title: 'OutbreakScience Rapid PREreview',
     description:
       'Rapid reviews of preprints posted on OutbreakScience Rapid PREreview',
-    id: 'https://outbreaksci.prereview.org/',
     link: 'https://outbreaksci.prereview.org/',
-    image: 'http://example.com/image.png',
-    favicon: 'http://example.com/favicon.ico',
     copyright: 'OutbreakScience Rapid PREreview',
     author: {
       name: 'Outbreak Science Rapid PREreview',
@@ -178,7 +175,6 @@ const buildFeed = async () => {
     feed.addItem({
       title: 'A rapid review of ' + `${review.preprintTitle}`,
       preprintDOI: review.preprintId,
-      id: review.reviewLink,
       link: review.reviewLink,
       reviewer: review.reviewer,
       date: review.dateReviewed,
@@ -194,7 +190,7 @@ const buildFeed = async () => {
 };
 
 console.log(
-  'Downloading all reviews of preprints with DOIs on OutbreakScience Rapid PREreview...',
+  'Downloading all reviews of preprints with DOIs on Outbreak Science Rapid PREreview...',
 );
 
 buildFeed();
@@ -221,10 +217,10 @@ const buildXML = async () => {
 
   for (let i = 0; i < preprints.length; i++) {
     xml
-      .ele('link', { providerId: 'PREReview' })
+      .ele('link', { providerId: '2068' })
       .ele('resource')
       .ele('title')
-      .txt(`PREreview(s) of '${preprints[i].title}'`)
+      .txt(`Rapid PREreview(s) of '${preprints[i].title}'`)
       .up()
       .ele('url')
       .txt(preprints[i].link)

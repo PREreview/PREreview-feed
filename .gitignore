@@ -1,3 +1,8 @@
+# downloaded feeds
+rss.xml
+reviews.json
+europepmc.xml
+
 # Logs
 logs
 *.log

@@ -173,10 +173,9 @@ const buildFeed = async () => {
 
   withDOI.forEach((review) => {
     feed.addItem({
-      title: 'A rapid review of ' + `${review.preprintTitle}`,
-      preprintDOI: review.preprintId,
+      title: 'A rapid review of ' + `${review.preprintTitle} by ${review.reviewer}` ,
+      preprintDOI: review.preprintId, 
       link: review.reviewLink,
-      reviewer: review.reviewer,
       date: review.dateReviewed,
     });
   });

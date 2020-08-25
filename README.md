@@ -1,4 +1,4 @@
-# Hi there!
+# PREreview-feed
 
 This script generates files that help incorporate reviews posted on [Outbreak Science Rapid PREreviews](https://outbreaksci.prereview.org) (OSrPRE) to other preprint sites. 
 

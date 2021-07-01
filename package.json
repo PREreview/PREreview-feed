@@ -29,7 +29,7 @@
     "./europepmcUpload/index.js"
   ],
   "scripts": {
-    "start": "npx ./europepmcUpload/index.js",
+    "start": "npx ./script.js",
     "lint": "eslint --ignore-path .gitignore --ext js --fix ./feed"
   },
   "engines": {

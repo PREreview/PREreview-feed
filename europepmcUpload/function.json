@@ -1,6 +1,0 @@
-{
-  "schedule": "0 0 3 * * *",
-  "name": "europepmcUpload",
-  "type": "timerTrigger",
-  "direction": "in"
-}

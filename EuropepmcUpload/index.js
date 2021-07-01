@@ -3,12 +3,15 @@ const fs = require('fs');
 const { create } = require('xmlbuilder2');
 const ftp = require('basic-ftp');
 
-let FTP_USER, FTP_PASS;
+let FTP_USER, FTP_PASS, FTP_HOST, FTP_DIR;
 let URL = 'http://prereview2-staging.azurewebsites.net';
+const TMPDIR = process.env.TMPDIR || '/tmp'
 if (process.env.NODE_ENV === 'production') {
   URL = 'https://prereview.org';
   FTP_USER = process.env.FTP_USER;
   FTP_PASS = process.env.FTP_PASS;
+  FTP_HOST = process.env.FTP_HOST;
+  FTP_DIR = process.env.FTP_DIR;
 }
 
 // only fetches preprints with reviews
@@ -103,10 +106,10 @@ const buildXML = async () => {
 
   const output = xml.end({ prettyPrint: true });
 
-  fs.writeFile('europepmc.xml', output, (error) => {
+  fs.writeFile(`${TMPDIR}/europepmc.xml`, output, (error) => {
     if (error) throw error;
     console.log(
-      'An XML file of all reviews in Europe PMC LabsLink format has been saved to europepmc.xml!',
+      `An XML file of all reviews in Europe PMC LabsLink format has been saved to ${TMPDIR}/europepmc.xml!`,
     );
   });
 };
@@ -116,13 +119,14 @@ const uploadToEuropePMC = async () => {
   client.ftp.verbose = true;
   try {
     await client.access({
-      host: 'TBD',
+      host: `${FTP_HOST}`,
       user: `${FTP_USER}`,
       password: `${FTP_PASS}`,
       secure: false,
     });
     console.log(await client.list());
-    await client.uploadFrom('europepmc.xml', 'europepmc.xml');
+    await client.cd(`${FTP_DIR}`);
+    await client.uploadFrom(`${TMPDIR}/europepmc.xml`, 'links.xml');
   } catch (err) {
     console.log(err);
   }

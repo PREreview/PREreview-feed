@@ -21,16 +21,16 @@
     "doc": "docs"
   },
   "homepage": "https://github.com/throneless-tech/PREreview-feed",
-  "main": "./src/index.js",
+  "main": "./europepmcUpload/index.js",
   "bin": {
-    "prereview-feed": "./src/index.js"
+    "prereview-feed": "./europepmcUpload/index.js"
   },
   "files": [
-    "./src/index.js"
+    "./europepmcUpload/index.js"
   ],
   "scripts": {
-    "start": "npx ./src/index.js",
-    "lint": "eslint --ignore-path .gitignore --ext js --fix ./src"
+    "start": "npx ./europepmcUpload/index.js",
+    "lint": "eslint --ignore-path .gitignore --ext js --fix ./feed"
   },
   "engines": {
     "node": ">=12.0"
@@ -94,6 +94,7 @@
     "prettier": "^2.1.0"
   },
   "dependencies": {
+    "basic-ftp": "^4.6.6",
     "feed": "^4.2.1",
     "node-fetch": "^2.6.0",
     "xmlbuilder2": "^2.3.1"

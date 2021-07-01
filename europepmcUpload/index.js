@@ -21,7 +21,7 @@ const getPreprints = async () => {
   try {
     const response = await fetch(url);
     const data = await response.json();
-    return data;
+    return data.data;
   } catch (error) {
     console.log('oh dear, looks like we broke the preprints fetch: ', error);
   }
@@ -129,11 +129,25 @@ const uploadToEuropePMC = async () => {
   client.close();
 };
 
-buildXML()
-  .then(() => {
-    if (FTP_USER && FTP_PASS) {
-      uploadToEuropePMC();
+module.exports = function(context, europepmcUpload) {
+  if (europepmcUpload && europepmcUpload.IsPastDue && context) {
+    context.log('Upload is running late!');
+  }
+  buildXML()
+    .then(() => {
+      if (FTP_USER && FTP_PASS) {
+        uploadToEuropePMC();
+      }
+      return;
+    })
+    .catch((err) => console.error('Failed to export:', err));
+  if (context) {
+    if (europepmcUpload && europepmcUpload.IsPastDue) {
+      context.log('Upload is running late!');
     }
-    return;
-  })
-  .catch((err) => console.error('Failed to export:', err));
+    const timestamp = new Date().toISOString();
+    context.log('Upload ran!', timestamp);
+  }
+};
+
+

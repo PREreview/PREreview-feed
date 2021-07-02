@@ -96,10 +96,8 @@ const buildXML = async () => {
       .txt(preprints[i].link)
       .up()
       .up()
-      .ele('record')
       .ele('doi')
       .txt(preprints[i].doi)
-      .up()
       .up()
       .up();
   }
@@ -152,6 +150,7 @@ module.exports = function(context, europepmcUpload) {
     const timestamp = new Date().toISOString();
     context.log('Upload ran!', timestamp);
   }
+  return;
 };
 
 
